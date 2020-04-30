@@ -139,16 +139,15 @@ class Spacecraft(Asset):
                 vector = vel_vec
             elif self.thrust_direction == '+y':
                 # vec = [0,1]
-                vector = np.matmul(get_rot_matrix(np.pi), vel_vec)
+                vector = rotate(np.pi, vel_vec)
             elif self.thrust_direction == '-x':
                 # vec = [1,0]
-                vector = np.matmul(get_rot_matrix(np.pi/2), vel_vec)
+                vector = rotate(np.pi/2, vel_vec)
             elif self.thrust_direction == '+x':
                 # vec = [-1,0]
-                vector = np.matmul(get_rot_matrix(np.pi * 1.5), vel_vec)
+                vector = rotate(np.pi*1.5, vel_vec)
 
             force = Force(vector[0], vector[1], self.thrust_mag)
-            # print(math.degrees(angle_between(self.vel.vec, [force.x,force.y])))
             return Momentum.from_impulse(force, time)
 
         return Momentum(0.0, 0.0)
@@ -219,3 +218,4 @@ class Spacecraft(Asset):
         self._p = val
         self.vel = Velocity(val.x / self.mass, val.y / self.mass)
         # print(val)
+        

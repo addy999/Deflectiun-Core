@@ -21,7 +21,7 @@ class Scene:
         
         self.win_region = win_region
         self.win_min_velocity = win_velocity
-        self._attempts = 0
+        self.attempts = 0
         self.won = False
 
         if not self.sc_start_pos:
@@ -50,6 +50,12 @@ class Scene:
 
         for planet in self.planets:
             planet.orbit.progress = self.initial_orbit_pos[planet]
+    
+    def reset(self):
+        
+        self.reset_pos()
+        self.attempts = 0
+        self.won = False
 
     def update_all_pos(self, impulse_time):
 
