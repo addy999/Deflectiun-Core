@@ -10,7 +10,7 @@ sys.path.append(modpath)
 
 from assests import *
 from scene import *
-from utilities import *
+from physics import *
 
 class GameScene(Scenario):
     
@@ -318,7 +318,7 @@ class Game:
         self.playAudio(getModpath() + r'\music\yeet_vine.mp3')        
         self.renderFullscreenDialog(['Won!'], xoffsets=[-10], sleep_time = 3.5)
         self.current_scene = self.nextScene() #iterate next scene
-        self.current_scene.resetPos()
+        self.current_scene.reset_pos()
         self.current_scene._attempts += 1
         self.current_scene.won = True    
         self.stopAudio()           
@@ -327,7 +327,7 @@ class Game:
         
         self.playAudio(getModpath() + r'\music\gottem_vine_cut.mp3')        
         self.renderFullscreenDialog(['Oops, try again!'], xoffsets=[-75], sleep_time = 3.5)
-        self.current_scene.resetPos()
+        self.current_scene.reset_pos()
         self.current_scene._attempts += 1
         self.stopAudio()   
     

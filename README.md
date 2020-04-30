@@ -1,18 +1,6 @@
-# Astron
+# Deflectiun Core
+## Core Python module for the game engine and API
 ---
-
-## Installation instructions
-
-*For Python 3*
-
-`pip install astron`
-
-To play the pre made five-level game:
-```python
-import astron
-astron.game.startGame()
-```
-
 
 ### Note: SI Units used throughout library
 ```
