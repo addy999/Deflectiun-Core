@@ -2,7 +2,9 @@ import sys
 import os
 import numpy as np
 import math
+
 from .physics import *
+from shapely.geometry import Point, Polygon
 
 class Asset:
 
@@ -39,7 +41,6 @@ class Asset:
 
     def calc_gravitational_force(self, other_asset):
 
-        G = 6.67408e-11
         M = self.mass
         m = other_asset.mass
         r = self.calc_distance(other_asset)
@@ -48,7 +49,7 @@ class Asset:
         x, y = self.calc_vector(other_asset)
 
         return Force(x, y, mag)
-
+    
     @property
     def p(self):
         return self._p
@@ -60,21 +61,29 @@ class Asset:
 
 class Planet(Asset):
 
-    def __init__(self, name, mass=0.0, orbit=Orbit, color=(100, 100, 100)):
+    def __init__(self, 
+                 name, 
+                 mass=0.0, 
+                 orbit=Orbit, 
+                 radius_per_kilogram = 45 / 4e16):
 
         super().__init__(name, 0.0, 0.0, mass)
-        self.g = 6.67408e-11  # m^3/kg*s^2
         self.orbit = orbit
-        self.color = color
+        self.radius = radius_per_kilogram * mass
         self.move()
+        self.poly = Point((self.x, self.y)).buffer(self.radius)
 
     def move(self, dt=1.0):
 
         self.x, self.y = self.orbit.next_pos(dt)
-
+    
+    def sc_in_planet(self, sc):
+        
+        center = self.x, self.y
+        
 class Spacecraft(Asset):
 
-    def __init__(self, name, mass=0.0, gas_level=0.0, thrust_force=0.0, sprite=None):
+    def __init__(self, name, mass=0.0, gas_level=0.0, thrust_force=0.0):
 
         super().__init__(name, 0.0, 0.0, mass)
         self.gas_level = gas_level
@@ -82,18 +91,13 @@ class Spacecraft(Asset):
         self.thrust = False
         self.thrust_direction = '-y'  # +/-x,-y
         self.thrust_mag = thrust_force
-        self.sprite = sprite
 
-        # Load default if none given
-        if not sprite:
-            self.sprite = Sprite()
-
-    def bodyTransform(self, vector):
+    def body_transform(self, vector):
         ''' Body pointing towards self.vel '''
 
         return np.matmul(self.vel.rot_matrix, vector)
 
-    def getThrustImpulse(self, time):
+    def get_thrust_impulse(self, time):
 
         if self.gas_level <= 0.0:
             self.gas_level = 0.0
@@ -129,7 +133,7 @@ class Spacecraft(Asset):
     def set_net_momentum(self, impulse_time, external_force=None):
 
         # Thrust impulse
-        thrust_i = self.getThrustImpulse(impulse_time)
+        thrust_i = self.get_thrust_impulse(impulse_time)
 
         # External impulse
         if external_force:
@@ -139,6 +143,37 @@ class Spacecraft(Asset):
 
         self.p = self.p + thrust_i + external_i
 
+    def find_closest_planet(self, planets=list):
+
+        current_distance = self.calc_distance(planets[0])
+        index_of_closest = 0
+        current_index = 0
+        for num in range(len(planets)):
+            if self.calc_distance(planets[current_index]) < current_distance:
+                index_of_closest = current_index
+                current_distance = self.calc_distance(planets[current_index])
+            current_index += 1
+
+        return planets[index_of_closest]
+
+    def update_pos(self, impulse_time=float, planets=list, closest_only=True):
+
+        planet_f = 0.0
+
+        if closest_only:
+            closes_planet = self.find_closest_planet(planets)
+
+            if closes_planet:
+                planet_f = self.calc_gravitational_force(closes_planet)
+        else:
+            for planet in planets:
+                planet_f += self.calc_gravitational_force(planet)
+
+        self.set_net_momentum(impulse_time, planet_f)
+        self.move(impulse_time)
+
+        return self.x, self.y
+    
     def move(self, time):
 
         self.x += self.vel.x * time
@@ -160,10 +195,4 @@ class Spacecraft(Asset):
     def p(self, val):
         self._p = val
         self.vel = Velocity(val.x / self.mass, val.y / self.mass)
-        if self.thrust:
-            self.sprite.transform(
-                self.x, self.y, self.vel.theta, self.thrust_direction)
-        else:
-            self.sprite.transform(self.x, self.y, self.vel.theta)
-
         # print(val)

@@ -3,6 +3,8 @@ import math
 import os
 import sys
 
+G = 6.67408e-11  # m^3/kg*s^2
+
 class Velocity:
 
     def __init__(self, x_vel, y_vel):
