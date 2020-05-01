@@ -110,7 +110,7 @@ class Spacecraft(Asset):
         ]
         
         # Rotate
-        rotated_rect =  [rotate(vec, theta) for vec in rect]
+        rotated_rect =  [rotate(theta, vec) for vec in rect]
         
         # Translate
         final_rect = [(p[0]+self.x, p[1]+self.y) for p in rotated_rect]

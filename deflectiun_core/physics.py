@@ -119,7 +119,7 @@ def get_rot_matrix(theta):
         [math.sin(theta), math.cos(theta)]
     ]
 
-def rotate(vec, theta):
+def rotate(theta, vec):
     
     return np.matmul(get_rot_matrix(theta), vec)
 
