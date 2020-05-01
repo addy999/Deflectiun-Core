@@ -12,9 +12,11 @@ class Game:
     
     def __init__(self, fps = 60.0, scenes = list):
         
+        
+        assert fps > 0, 'Game must have an FPS!'
+        
         self.fps = fps
-        self.last_dt = 1 / fps
-        self.current_dt = 1 / fps
+        self.dt = 1 / fps
         self.scenes = scenes    
         
         # for c,k in config.items():
@@ -133,15 +135,21 @@ class Game:
         [s.reset() for s in self.scenes]
         self.current_scene = self.scenes[0]
         self.done = False  
+    
+    def wait(self):
+        
+        time.sleep(self.dt)
 
     def send_command(self, command=int):
         
         self.control_sc(command)
-        self.current_scene.update_all_pos(self.current_dt)
+        self.current_scene.update_all_pos(self.dt)
         level_won, level_failed = self.check_status()
         if level_won:
             self._scene_won()
         elif level_failed:
             self._scene_failed()
+        
+        self.wait()
         
         return level_won, level_failed        

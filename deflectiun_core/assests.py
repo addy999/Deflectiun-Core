@@ -17,7 +17,8 @@ class Asset:
         self.vel = vel
         if not vel:
             self.vel = Velocity(0.0, 0.0)
-
+            
+        self.poly = None
         self._p = Momentum(self.vel.x, self.vel.y, self.mass)
 
     def reset_pos(self):
