@@ -83,7 +83,7 @@ class Planet(Asset):
              
 class Spacecraft(Asset):
 
-    def __init__(self, name, mass=0.0, gas_level=0.0, thrust_force=0.0, width=10, length=10):
+    def __init__(self, name, mass=0.0, gas_level=0.0, thrust_force=0.0, width=10, length=10, gas_reduction_level=1/1000):
 
         super().__init__(name, 0.0, 0.0, mass)
         self.gas_level = gas_level
@@ -93,7 +93,7 @@ class Spacecraft(Asset):
         self.thrust_mag = thrust_force
         self.width = width
         self.length = length
-        self.gas_reduction_level = 1/1000
+        self.gas_reduction_level = gas_reduction_level
         self.draw_poly()
 
     def draw_poly(self):
@@ -116,11 +116,6 @@ class Spacecraft(Asset):
         
         self.poly = Polygon(final_rect)        
     
-    def body_transform(self, vector):
-        ''' Body pointing towards self.vel '''
-
-        return np.matmul(self.vel.rot_matrix, vector)
-
     def get_thrust_impulse(self, time):
 
         if self.gas_level <= 0.0:
@@ -218,5 +213,5 @@ class Spacecraft(Asset):
     def p(self, val):
         self._p = val
         self.vel = Velocity(val.x / self.mass, val.y / self.mass)
-        # print(val)
+        self.draw_poly()
         

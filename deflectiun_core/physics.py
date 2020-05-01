@@ -81,6 +81,10 @@ class Orbit:
         self.center_y = center_y
         self.progress = progress
         self.cw = CW
+        self.change_angular_step(angular_step)
+    
+    def change_angular_step(self, angular_step=float):
+        
         self.angular_step = angular_step % 2*np.pi
 
     def x(self, progress):

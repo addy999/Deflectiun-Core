@@ -10,19 +10,15 @@ from .physics import *
      
 class Game:
     
-    def __init__(self, fps = 60.0, scenes = list, config = dict(
-                per_scene_score = 100.0,
-                per_attempt_deductions = 5.0,
-                per_gas_bonus_score = 10.0)
-                 ):
+    def __init__(self, fps = 60.0, scenes = list):
         
         self.fps = fps
         self.last_dt = 1 / fps
         self.current_dt = 1 / fps
         self.scenes = scenes    
         
-        for c,k in config.items():
-            self.__dict__.update({c,k})  
+        # for c,k in config.items():
+        #     self.__dict__.update({c,k})  
         
         # Reset each scene
         self.reset()
@@ -119,12 +115,12 @@ class Game:
         
         for scene in self.scenes:
             if scene.won:
-                total += self.per_scene_score 
+                total += scene.completion_score 
                 if scene.attempts > 1:
-                    total -= (scene.attempts-1) * self.per_attempt_deductions
+                    total -= (scene.attempts-1) * scene.attempt_score_reduction
                 if scene.attempts >= 1:
                     gas_left = scene.sc.gas_level / scene.sc._initial_gas_level
-                    gas_bonus += gas_left * self.per_gas_bonus_score
+                    gas_bonus += gas_left * scene.gas_bonus_score
                     total += gas_bonus            
         
         if total < 0:
