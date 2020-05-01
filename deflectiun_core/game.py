@@ -2,7 +2,6 @@ import os, sys
 import math
 import numpy as np
 import time
-import ctypes
 
 from .assests import *
 from .scene import *
@@ -47,7 +46,6 @@ class Game:
     
     def check_status(self):
         
-        scene = self.current_scene
         sc = self.current_scene.sc
         screen_x = self.current_scene.size[0]
         screen_y = self.current_scene.size[0]
@@ -136,20 +134,27 @@ class Game:
         self.current_scene = self.scenes[0]
         self.done = False  
     
-    def wait(self):
+    def wait(self, time_to_remove):
         
-        time.sleep(self.dt)
+        dt = self.dt - time_to_remove
+        if dt < 0:
+            dt = 0
+        
+        time.sleep(dt)
 
     def send_command(self, command=int):
         
+        start = time.time()
         self.control_sc(command)
         self.current_scene.update_all_pos(self.dt)
         level_won, level_failed = self.check_status()
+        
         if level_won:
             self._scene_won()
         elif level_failed:
             self._scene_failed()
         
-        self.wait()
+        time_elapsed = time.time() - start
+        self.wait(time_elapsed)
         
         return level_won, level_failed        
