@@ -46,7 +46,7 @@ while not level_won and not level_fail:
             elif event.type == pygame.KEYUP and event.key in [pygame.K_DOWN, pygame.K_UP, pygame.K_LEFT, pygame.K_RIGHT]:
                 command = 0
         
-        level_won, level_fail = game.send_command(command)
+        level_won, level_fail = game.step(command)
         print(sc.gas_level, sc.thrust_direction)
         
         # Goal post
