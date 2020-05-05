@@ -34,7 +34,7 @@ class Game:
                         self.current_scene.sc.thrust_direction = '-x'
                 elif command == 3:
                         self.current_scene.sc.thrust_direction = '-y'
-                else:
+                else: # command == 4
                         self.current_scene.sc.thrust_direction = '+x'
                     
             else: # release thrust

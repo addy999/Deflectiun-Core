@@ -88,9 +88,14 @@ class Orbit:
         self.angular_step = angular_step % 2*np.pi
 
     def x(self, progress):
+        # i = progress
+        # # return self.center_x - self.b * np.cos(i)
+    
         return self.a * np.cos(progress) + self.center_x
 
     def y(self, progress):
+        # i = progress
+        # return self.center_y + self.a * math.sin(i)       
         return self.b * np.sin(progress) + self.center_y
 
     def next_pos(self, factor=1.0):
