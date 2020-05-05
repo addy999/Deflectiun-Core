@@ -31,6 +31,7 @@ class Scene:
         self.win_min_velocity = round_to_nearest(win_velocity, 10)
         self.attempts = 0
         self.won = False
+        self.fail = False
         
         self.completion_score = round_to_nearest(completion_score, 5)
         self.attempt_score_reduction = round_to_nearest(attempt_score_reduction, 5)

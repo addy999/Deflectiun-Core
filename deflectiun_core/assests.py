@@ -115,6 +115,7 @@ class Spacecraft(Asset):
         # Translate
         final_rect = [(p[0]+self.x, p[1]+self.y) for p in rotated_rect]
         
+        self.coords = final_rect
         self.poly = Polygon(final_rect)        
     
     def get_thrust_impulse(self, time):

@@ -31,9 +31,9 @@ class Game:
                 if command == 1:
                         self.current_scene.sc.thrust_direction = '+y'
                 elif command == 2:
-                        self.current_scene.sc.thrust_direction = '-y'
-                elif command == 3:
                         self.current_scene.sc.thrust_direction = '-x'
+                elif command == 3:
+                        self.current_scene.sc.thrust_direction = '-y'
                 else:
                         self.current_scene.sc.thrust_direction = '+x'
                     
@@ -138,7 +138,7 @@ class Game:
         
         time.sleep(dt)
 
-    def step(self, command=int, wait=True):
+    def step(self, command=int, wait=False):
         
         start = time.time()
         self.control_sc(command)
