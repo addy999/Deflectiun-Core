@@ -84,9 +84,10 @@ class Planet(Asset):
              
 class Spacecraft(Asset):
 
-    def __init__(self, name, mass=0.0, gas_level=0.0, thrust_force=0.0, width=10, length=10, gas_reduction_level=1/1000):
+    def __init__(self, name, mass=0.0, gas_level=0.0, thrust_force=0.0, width=10, length=10, gas_per_thrust=1/1000, min_dist_to_planet=1000):
 
         super().__init__(name, 0.0, 0.0, mass)
+        self._theta = -math.pi/2
         self.gas_level = gas_level
         self._initial_gas_level = gas_level
         self.thrust = False
@@ -94,12 +95,13 @@ class Spacecraft(Asset):
         self.thrust_mag = thrust_force
         self.width = width
         self.length = length
-        self.gas_reduction_level = gas_reduction_level
+        self.gas_per_thrust = gas_per_thrust
+        self.min_dist_to_planet = min_dist_to_planet
         self.draw_poly()
 
     def draw_poly(self):
 
-        theta = self.vel.theta
+        theta = self.theta
         
         # Initiate rectangle corners around origin
         rect = [
@@ -126,7 +128,7 @@ class Spacecraft(Asset):
 
         if self.thrust:
 
-            self.gas_level -= self.thrust_mag * self.gas_reduction_level
+            self.gas_level -= self.thrust_mag * self.gas_per_thrust
 
             vel_vec = self.vel.vec
             if np.linalg.norm(self.vel.vec) == 0.0:
@@ -165,7 +167,9 @@ class Spacecraft(Asset):
 
     def find_closest_planet(self, planets=list):
 
-        current_distance = self.calc_distance(planets[0])
+        # current_distance = self.calc_distance(planets[0])
+        # print("Using", self.min_dist_to_planet)
+        current_distance = self.min_dist_to_planet
         index_of_closest = 0
         current_index = 0
         for num in range(len(planets)):
@@ -173,7 +177,12 @@ class Spacecraft(Asset):
                 index_of_closest = current_index
                 current_distance = self.calc_distance(planets[current_index])
             current_index += 1
-
+        # print("CLOSEST", current_distance)
+        
+        if current_distance == self.min_dist_to_planet:
+            # No close planet found
+            return None
+        
         return planets[index_of_closest]
 
     def update_pos(self, impulse_time=float, planets=list, closest_only=True):
@@ -182,7 +191,6 @@ class Spacecraft(Asset):
 
         if closest_only:
             closes_planet = self.find_closest_planet(planets)
-
             if closes_planet:
                 planet_f = self.calc_gravitational_force(closes_planet)
         else:
@@ -208,6 +216,23 @@ class Spacecraft(Asset):
         self.gas_level = self._initial_gas_level
 
     @property
+    def theta(self):
+        return self._theta
+
+    @theta.setter
+    def theta(self, vel_theta):
+               
+        old_val = self._theta
+        
+        # print("assinging", vel_theta, "Prev", old_val)
+        
+        if abs(vel_theta-old_val) < math.pi:
+            # self._theta = old_val + (val-old_val)/2
+            self._theta = vel_theta - math.pi*0.5
+        
+        # print("Assingined", self._theta)
+        
+    @property
     def p(self):
         return self._p
 
@@ -215,5 +240,6 @@ class Spacecraft(Asset):
     def p(self, val):
         self._p = val
         self.vel = Velocity(val.x / self.mass, val.y / self.mass)
+        self.theta = self.vel.theta
         self.draw_poly()
         

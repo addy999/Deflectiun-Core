@@ -26,6 +26,7 @@ class Scene:
         self.sc = spacecraft
         self.planets = planets
         self.sc_start_pos = sc_start_pos
+        self.sc.min_dist_to_planet = min(*self.size)*0.75
         
         self.win_region = win_region
         self.win_min_velocity = round_to_nearest(win_velocity, 10)
@@ -104,7 +105,7 @@ class LevelBuilder:
                 mass = (100, 125),
                 gas_level = (350, 450),
                 thrust_force = (3000,4500),
-                gas_reduction_level = (1/1000, 1.5/1000),
+                gas_per_thrust = (1/1000, 1.5/1000),
             ),
             scene = dict(
                 win_region = ((self.x_size*0.25,self.x_size*0.75), (self.y_size,self.y_size)), # ([x1,x2], [y1,y2])
@@ -132,7 +133,7 @@ class LevelBuilder:
             planet = Planet(name='', mass=uniform(*init_config.planet.mass), orbit = orbit, radius_per_kilogram=uniform(*init_config.planet.radius_per_kilogram))
             planets.append(planet)
         
-        sc = Spacecraft('', uniform(*init_config.sc.mass), uniform(*init_config.sc.gas_level),uniform(*init_config.sc.thrust_force), gas_reduction_level=uniform(*init_config.sc.gas_reduction_level))
+        sc = Spacecraft('', uniform(*init_config.sc.mass), uniform(*init_config.sc.gas_level),uniform(*init_config.sc.thrust_force), gas_per_thrust=uniform(*init_config.sc.gas_per_thrust))
         
         region = init_config.scene.win_region                   
         scene = Scene((self.x_size,self.y_size), sc, planets, sc_start_pos=None, win_region=region, win_velocity=uniform(*init_config.scene.win_velocity), completion_score=randint(*init_config.scene.completion_score),attempt_score_reduction=randint(*init_config.scene.attempt_score_reduction ), gas_bonus_score=randint(*init_config.scene.gas_bonus_score))
