@@ -15,7 +15,7 @@ class Scene:
                  spacecraft, 
                  planets, 
                  sc_start_pos=None, 
-                 win_region = tuple, # ([x1,x2], [y1,y2])
+                 win_region = tuple,
                  win_velocity = 0.0,
                  completion_score=100, 
                  attempt_score_reduction=5, 
@@ -56,7 +56,7 @@ class Scene:
         Default starting position assumed to be bottom centre of screen
         '''
 
-        return self.size[0] / 2, 10
+        return self.size[0] / 2, self.sc.length/2
 
     def reset_pos(self):
 
@@ -75,6 +75,10 @@ class Scene:
 
         [planet.move(impulse_time) for planet in self.planets]
         self.sc.update_pos(impulse_time, self.planets)
+    
+    def __repr__(self):
+        pprint(str(vars(self)),width=100, indent=5,depth=4)
+        return ''
        
 class LevelBuilder:
     
@@ -87,6 +91,37 @@ class LevelBuilder:
         self.y_size = y_size
         
         # Initialization dicts
+        
+        self.easy = dict(
+            planet = dict(
+                n = (1,1),
+                mass = (3e16, 4e16),
+                radius_per_kilogram = (45 / 4e16, 45 / 4e16)
+            ),
+            orbit = dict(
+                a = (1.0, 1.0),
+                b = (0.5, 1.0),
+                angular_step = (2*np.pi/200, 2*np.pi/200), # speed
+                center_x = (self.x_size, self.x_size/2), 
+                center_y = (0, self.y_size/2),
+            ),
+            sc = dict(
+                mass = (100, 125),
+                gas_level = (500, 600),
+                thrust_force = (3000,3000),
+                gas_per_thrust = (0.5/1000, 1/1000),
+            ),
+            scene = dict(
+                # (x_range), (y_range)
+                # Horizontal
+                win_region1 = ((0, self.x_size/4), (self.y_size,self.y_size)),
+                win_region2 = ((self.x_size*0.75, self.x_size), (self.y_size,self.y_size)), 
+                win_velocity = (90, 150),
+                completion_score=(50,100), 
+                attempt_score_reduction=(1,3), 
+                gas_bonus_score=(5,5),  
+            )   
+        )
         
         self.medium = dict(
             planet = dict(
@@ -108,7 +143,10 @@ class LevelBuilder:
                 gas_per_thrust = (1/1000, 1.5/1000),
             ),
             scene = dict(
-                win_region = ((self.x_size*0.25,self.x_size*0.75), (self.y_size,self.y_size)), # ([x1,x2], [y1,y2])
+                # (x_range), (y_range)
+                # Vertical
+                win_region1 = ((0,0), (self.y_size/3, self.y_size/2)), 
+                win_region2 = ((0,0), (self.y_size*0.75,self.y_size)), 
                 win_velocity = (150, 190),
                 completion_score=(100,150), 
                 attempt_score_reduction=(5,7), 
@@ -118,10 +156,8 @@ class LevelBuilder:
     
     def create(self, option='medium'):
         
-        if option=='medium':
-            init_config = dict_to_class(self.medium)
-        else:
-            raise NotImplementedError
+       
+        init_config = dict_to_class(self.__dict__[option.lower()])
         
         planets = []
         n = randint(*init_config.planet.n)
@@ -135,8 +171,10 @@ class LevelBuilder:
         
         sc = Spacecraft('', uniform(*init_config.sc.mass), uniform(*init_config.sc.gas_level),uniform(*init_config.sc.thrust_force), gas_per_thrust=uniform(*init_config.sc.gas_per_thrust))
         
-        region = init_config.scene.win_region                   
-        scene = Scene((self.x_size,self.y_size), sc, planets, sc_start_pos=None, win_region=region, win_velocity=uniform(*init_config.scene.win_velocity), completion_score=randint(*init_config.scene.completion_score),attempt_score_reduction=randint(*init_config.scene.attempt_score_reduction ), gas_bonus_score=randint(*init_config.scene.gas_bonus_score))
+        win_region1 = (uniform(*init_config.scene.win_region1[0]), uniform(*init_config.scene.win_region1[1]))    
+        win_region2 = (uniform(*init_config.scene.win_region2[0]), uniform(*init_config.scene.win_region2[1]))  
+                       
+        scene = Scene((self.x_size,self.y_size), sc, planets, sc_start_pos=None, win_region=(win_region1, win_region2), win_velocity=uniform(*init_config.scene.win_velocity), completion_score=randint(*init_config.scene.completion_score),attempt_score_reduction=randint(*init_config.scene.attempt_score_reduction ), gas_bonus_score=randint(*init_config.scene.gas_bonus_score))
         
         return scene
 
