@@ -109,6 +109,9 @@ class Orbit:
     def reset_pos(self):
         self.progress = 0
         return self.x(self.progress), self.y(self.progress)
+    
+    def __repr__(self):
+        return str(vars(self))
 
 def unit_vector(vector):
     """ Returns the unit vector of the vector.  """

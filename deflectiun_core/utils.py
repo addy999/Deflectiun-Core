@@ -1,3 +1,5 @@
+from pprint import pprint
+
 class dotdict(dict):
     """dot.notation access to dictionary attributes"""
     __getattr__ = dict.get
