@@ -114,8 +114,6 @@ class LevelBuilder:
                 length=(35,35),
             ),
             scene = dict(
-                # (x_range), (y_range)
-                # Horizontal
                 win_region1 = ((0, self.x_size/4), (self.y_size,self.y_size)),
                 win_region2 = ((self.x_size*0.75, self.x_size), (self.y_size,self.y_size)), 
                 win_velocity = (90, 150),
@@ -124,19 +122,19 @@ class LevelBuilder:
                 gas_bonus_score=(5,5),  
             )   
         )
-        
         self.medium = dict(
             planet = dict(
-                n = (2,2),
+                n = (1,2),
                 mass = (4e16, 5e16),
                 radius_per_kilogram = (45 / 4e16, 45 / 4e16)
             ),
             orbit = dict(
-                a = (1.0, 1.0),
-                b = (1.5, 2.0),
-                angular_step = (2*np.pi/200, 3*np.pi/200), # speed
-                center_x = (self.x_size/2-0.25, self.x_size/2+0.25), 
-                center_y = (self.y_size/2-0.25, self.y_size/2+0.25),
+                progress = (-np.pi/2, np.pi/2),
+                a = (100, 400),
+                b = (200, 600),
+                angular_step = (1.5*np.pi/200, 3*np.pi/200), # speed
+                center_x = (self.x_size/4, 3*self.x_size/4), 
+                center_y = (self.y_size/4, 3*self.y_size/4),
             ),
             sc = dict(
                 mass = (100, 125),
@@ -147,8 +145,6 @@ class LevelBuilder:
                 length=(35,35),
             ),
             scene = dict(
-                # (x_range), (y_range)
-                # Vertical
                 win_region1 = ((0,0), (self.y_size/3, self.y_size/2)), 
                 win_region2 = ((0,0), (self.y_size*0.75,self.y_size)), 
                 win_velocity = (150, 190),
