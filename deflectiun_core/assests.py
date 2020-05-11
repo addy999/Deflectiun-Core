@@ -238,4 +238,3 @@ class Spacecraft(Asset):
         self.vel = Velocity(val.x / self.mass, val.y / self.mass)
         self.theta = self.vel.theta
         self.draw_poly()
-        

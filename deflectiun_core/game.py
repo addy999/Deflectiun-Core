@@ -44,31 +44,22 @@ class Game:
         
         sc = self.current_scene.sc
         screen_x = self.current_scene.size[0]
-        screen_y = self.current_scene.size[0]
+        screen_y = self.current_scene.size[1]
         win_region_1 = self.current_scene.win_region[0]
         win_region_2 = self.current_scene.win_region[1]
         
         won = False
         failed = False
                 
-        # vertical
-        if win_region_1[0] == win_region_2[0] and win_region_1[0] == 0.0:
-            # left half
-            if sc.x <= 0 and win_region_1[1] <= sc.y <= win_region_2[1] and sc.vel.mag >= self.current_scene.win_min_velocity:
-                won = True
-        elif win_region_1[0] == win_region_2[0] and win_region_1[0] == screen_x:
-            # right half
-            if sc.x >= screen_x and win_region_1[1] <= sc.y <= win_region_2[1] and sc.vel.mag >= self.current_scene.win_min_velocity:
-                won = True
+        # Vertical
+        if win_region_1[0] == win_region_2[0]: 
+            if (win_region_1[0] == 0.0 and sc.x <= 0) or (win_region_1[0] == screen_x and sc.x >= screen_x):
+                if win_region_1[1] <= sc.y <= win_region_2[1] and sc.vel.mag >= self.current_scene.win_min_velocity: won = True
+                
         # Horizontal
-        if win_region_1[1] == win_region_2[1] and win_region_1[1] == 0.0:
-            # top half
-            if sc.y <= 0 and win_region_1[0] <= sc.x <= win_region_2[0] and sc.vel.mag >= self.current_scene.win_min_velocity:
-                won = True
-        elif win_region_1[1] == win_region_2[1] and win_region_1[1] == screen_y:
-            # bottom half
-            if sc.y >= screen_y and win_region_1[0] <= sc.x <= win_region_2[0] and sc.vel.mag >= self.current_scene.win_min_velocity:
-                won = True
+        if win_region_1[1] == win_region_2[1]:
+            if (win_region_1[1] == 0.0 and sc.y <= 0) or (win_region_1[1] == screen_y and sc.y >= screen_y):
+                if win_region_1[0] <= sc.x <= win_region_2[0] and sc.vel.mag >= self.current_scene.win_min_velocity: won = True
                 
         # Out of bounds
         if not won and (not 0.0 < sc.x < self.current_scene.size[0] or not 0.0 < sc.y < self.current_scene.size[1]):
