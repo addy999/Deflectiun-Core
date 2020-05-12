@@ -46,31 +46,39 @@ class Game:
         screen_x = self.current_scene.size[0]
         screen_y = self.current_scene.size[1]
         win_region_1 = self.current_scene.win_region[0]
-        win_region_2 = self.current_scene.win_region[1]
-        
+        win_region_2 = self.current_scene.win_region[1]        
         won = False
         failed = False
+        message = ""
+        
                 
         # Vertical
         if win_region_1[0] == win_region_2[0]: 
             if (win_region_1[0] == 0.0 and sc.x <= 0) or (win_region_1[0] == screen_x and sc.x >= screen_x):
-                if win_region_1[1] <= sc.y <= win_region_2[1] and sc.vel.mag >= self.current_scene.win_min_velocity: won = True
+                if win_region_1[1] <= sc.y <= win_region_2[1] and sc.vel.mag >= self.current_scene.win_min_velocity: 
+                    won = True
+                    message = "Won!"
                 
         # Horizontal
         if win_region_1[1] == win_region_2[1]:
             if (win_region_1[1] == 0.0 and sc.y <= 0) or (win_region_1[1] == screen_y and sc.y >= screen_y):
-                if win_region_1[0] <= sc.x <= win_region_2[0] and sc.vel.mag >= self.current_scene.win_min_velocity: won = True
+                if win_region_1[0] <= sc.x <= win_region_2[0] and sc.vel.mag >= self.current_scene.win_min_velocity: 
+                    won = True
+                    message = "Won!"
                 
         # Out of bounds
         if not won and (not 0.0 < sc.x < self.current_scene.size[0] or not 0.0 < sc.y < self.current_scene.size[1]):
             failed = True
+            message = "Failed: Out of bounds."
         
         # Collisions
-        for planet in self.current_scene.planets:
-            if sc.intersects(planet):
-                failed = True
+        if not failed:
+            for planet in self.current_scene.planets:
+                if sc.intersects(planet):
+                    failed = True
+                    message = "Failed: Collision."
         
-        return won, failed
+        return won, failed, message
           
     def set_next_scene(self):
         
@@ -134,7 +142,7 @@ class Game:
         start = time.time()
         self.control_sc(command)
         self.current_scene.update_all_pos(self.dt)
-        level_won, level_failed = self.check_status()
+        level_won, level_failed, message = self.check_status()
         
         if level_won:
             self._scene_won()
@@ -146,4 +154,4 @@ class Game:
         if wait:
             self.wait(time_elapsed)
         
-        return level_won, level_failed        
+        return level_won, level_failed, message        
