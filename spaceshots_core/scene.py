@@ -75,7 +75,7 @@ class Scene:
     def update_all_pos(self, impulse_time):
 
         [planet.move(impulse_time) for planet in self.planets]
-        self.sc.update_pos(impulse_time, self.planets)
+        self.sc.update_pos(impulse_time, self.planets, False)
     
     def __repr__(self):
         pprint(str(vars(self)),width=100, indent=5,depth=4)
@@ -174,16 +174,14 @@ class LevelBuilder:
         
         # Planets    
         planets = [Planet(name='', mass=uniform(*init_config.planet.mass), orbit = orbit, radius_per_kilogram=uniform(*init_config.planet.radius_per_kilogram)) for orbit in orbits]
-        print(closest_dist_to_sc(sc, planets),  max(self.x_size, self.y_size)/2)
-        d=0
-        while closest_dist_to_sc(sc, planets) <= max(self.x_size, self.y_size)/2:
-            [p.move() for p in planets]
-            print(closest_dist_to_sc(sc, planets),  max(self.x_size, self.y_size)/2)
-            d+=1
-        print(d, "attempts")
-            
-
-                
+        valid = False
+        while not valid:
+            valid = True
+            for planet in planets:
+                if not 0<=planet.x<=self.x_size or not 0<=planet.y<=self.y_size or sc.calc_distance(planet) < self.y_size/2:
+                    planet.move(10)
+                    valid = False
+  
         # Scene
         win_region1 = (uniform(*init_config.scene.win_region1[0]), uniform(*init_config.scene.win_region1[1]))    
         win_region2 = (uniform(*init_config.scene.win_region2[0]), uniform(*init_config.scene.win_region2[1]))    

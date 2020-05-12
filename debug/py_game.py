@@ -2,8 +2,8 @@ import sys
 import pygame
 sys.path.append("../")
 
-from deflectiun_core.game import *
-from deflectiun_core.scene import LevelBuilder
+from spaceshots_core.game import *
+from spaceshots_core.scene import LevelBuilder
 
 # Setup Pygame
 pygame.init()

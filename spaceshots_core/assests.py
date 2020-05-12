@@ -91,7 +91,7 @@ class Spacecraft(Asset):
     def __init__(self, name, mass=0.0, gas_level=0.0, thrust_force=0.0, width=10, length=10, gas_per_thrust=1/1000, min_dist_to_planet=1000):
 
         super().__init__(name, 0.0, 0.0, mass)
-        self._theta = -math.pi/2
+        self._theta = 0.0
         self.gas_level = round_to_nearest(gas_level, 10)
         self._initial_gas_level = self.gas_level
         self.thrust = False
@@ -188,7 +188,7 @@ class Spacecraft(Asset):
 
     def update_pos(self, impulse_time=float, planets=list, closest_only=True):
 
-        planet_f = 0.0
+        planet_f = Force(0,0,0)
 
         if closest_only:
             closes_planet = self.find_closest_planet(planets)

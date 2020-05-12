@@ -1,4 +1,4 @@
-# Deflectiun Core
+# spaceshots Core
 ## Core Python module for the game engine and API
 ---
 

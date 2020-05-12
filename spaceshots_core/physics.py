@@ -34,17 +34,31 @@ class Force:
 
     def __init__(self, x_vector, y_vector, mag):
 
+        ratio, mag = self._create_ratio(x_vector, y_vector, mag)
+        self.x = x_vector * ratio
+        self.y = y_vector * ratio
+        self.mag = mag
+    
+    def _create_ratio(self, x_vector, y_vector, mag):
+        
         hyp = (x_vector ** 2 + y_vector ** 2) ** 0.5
+        
         if hyp != 0.0:
             ratio = mag / hyp
         else:
             ratio = 0.0
             mag = 0.0
-
-        self.x = x_vector * ratio
-        self.y = y_vector * ratio
-        self.mag = mag
-
+        
+        return ratio, mag
+        
+    def __add__(self, new):
+        
+        self.x += new.x
+        self.y += new.y
+        self.mag = (self.x ** 2 + self.y ** 2) ** 0.5
+        
+        return self
+        
     def __repr__(self):
 
         return str((self.x, self.y))

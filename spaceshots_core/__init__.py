@@ -1,4 +1,4 @@
-__name__ = 'deflectiun_core'
+__name__ = 'spaceshots_core'
 __version__ = '0.1'
 
 import sys, os

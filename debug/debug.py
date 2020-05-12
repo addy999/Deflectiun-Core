@@ -1,8 +1,8 @@
 import sys
 sys.path.append("../")
 
-from deflectiun_core.game import *
-from deflectiun_core.scene import LevelBuilder
+from spaceshots_core.game import *
+from spaceshots_core.scene import LevelBuilder
 
 builder = LevelBuilder(900,700)
 scene = builder.create("medium")
