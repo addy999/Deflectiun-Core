@@ -21,20 +21,8 @@ class Scene:
                  completion_score=100, 
                  attempt_score_reduction=5, 
                  gas_bonus_score=10,  
+                 reset = True,
                  ):
-
-        # # Save args
-        # self.args = dict(
-        #     size=size, 
-        #     spacecraft=planets, 
-        #     planets=planets, 
-        #     sc_start_pos=sc_start_pos, 
-        #     win_region = win_region,
-        #     win_velocity = win_velocity,
-        #     completion_score=completion_score, 
-        #     attempt_score_reduction=attempt_score_reduction, 
-        #     gas_bonus_score=gas_bonus_score,  
-        # )        
         
         self.size = size
         self.sc = spacecraft
@@ -57,13 +45,10 @@ class Scene:
         else:
             self.sc.x, self.sc.y = sc_start_pos
 
-        self.initial_orbit_pos = {}
-        for planet in planets:
-            self.initial_orbit_pos.update({
-                planet: planet.orbit.progress
-            })
-
-        self.reset_pos()
+        self.initial_orbit_pos = [planet.orbit.progress for planet in planets]
+        
+        if reset:
+            self.reset_pos()
 
     def _make_sc_start_pos(self):
         '''
@@ -73,11 +58,13 @@ class Scene:
         return self.size[0] / 2, self.sc.length/2
 
     def reset_pos(self):
+        
+        # print("RESETING")
 
         self.sc.reset(self.sc_start_pos)
 
-        for planet in self.planets:
-            planet.orbit.progress = self.initial_orbit_pos[planet]
+        for i in range(len(self.planets)):
+            self.planets[i].orbit.progress = self.initial_orbit_pos[i]
     
     def reset(self):
         

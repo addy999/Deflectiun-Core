@@ -110,6 +110,7 @@ class Orbit:
         self.center_x = center_x
         self.center_y = center_y
         self.progress = progress
+        self._ang_step = angular_step
         self.cw = CW
         
         self.make_poly(a, b, center_x, center_y)

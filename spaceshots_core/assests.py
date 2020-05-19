@@ -79,16 +79,19 @@ class Planet(Asset):
         self.orbit = orbit
         self.radius = radius_per_kilogram * mass
         self.move()
-        self.poly = Point((self.x, self.y)).buffer(self.radius)
 
+    def make_poly(self):
+        self.poly = Point((self.x, self.y)).buffer(self.radius)
+    
     def move(self, dt=1.0):
 
         self.x, self.y = self.orbit.next_pos(dt)
-        self.poly = Point((self.x, self.y)).buffer(self.radius)
+        self.make_poly()
     
-    def save_state(self):
-        
+    def save_state(self):        
         return '+'.join(self.__dict__.values())
+
+    # def load_state(self, state=str)
              
 class Spacecraft(Asset):
 
@@ -225,8 +228,13 @@ class Spacecraft(Asset):
         dict_ = {i:j for i,j in self.__dict__.items() if i!="poly"}
         return '+'.join(dict_.values())
     
-    def load_state(self):
+    def load_state(self, state=list):
         
+        for i,val in enumerate(self.__dict__):
+            if val!="poly":
+                self.__dict__[val] = state[i]
+        
+        self.poly = Polygon(self.coords)
         
 
     @property

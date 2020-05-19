@@ -2,6 +2,7 @@ import os, sys
 import math
 import numpy as np
 import time
+import dill
 
 from .assests import *
 from .scene import *
@@ -9,7 +10,7 @@ from .physics import *
      
 class Game:
     
-    def __init__(self, fps = 60.0, scenes = list):
+    def __init__(self, fps = 60.0, scenes = list, reset=True):
         
         assert fps > 0, 'Game must have an FPS!'
         
@@ -18,7 +19,10 @@ class Game:
         self.scenes = scenes    
         
         # Reset each scene
-        self.reset()
+        if reset:
+            self.reset()
+        else:
+            self.current_scene = self.scenes[0]
     
     def control_sc(self, command=int):
         
@@ -160,6 +164,14 @@ class Game:
         
         to_return = ""
         to_return += str(self.fps) + "+"
+        
+# def game_to_str(_game):
+    
+#     return str(dill.dumps(_game, dill.HIGHEST_PROTOCOL, byref=True))
+
+# def str_to_game(_str):
+    
+#     return dill.loads(ast.literal_eval(_str))
         
         
         
