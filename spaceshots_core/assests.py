@@ -29,13 +29,10 @@ class Asset:
 
     def calc_distance(self, other_asset):
 
-        dx = self.x - other_asset.x
-        dy = self.y - other_asset.y
-
-        return np.sqrt(dx**2 + dy**2)
+        return sum([x**2 for x in self.calc_vector(other_asset)])**0.5
 
     def calc_vector(self, other_asset):
-
+        
         dx = other_asset.x - self.x
         dy = other_asset.y - self.y
 
@@ -95,9 +92,9 @@ class Planet(Asset):
              
 class Spacecraft(Asset):
 
-    def __init__(self, name, mass=0.0, gas_level=0.0, thrust_force=0.0, width=10, length=10, gas_per_thrust=1/1000, min_dist_to_planet=1000):
+    def __init__(self, name, mass=0.0, gas_level=0.0, thrust_force=0.0, width=10, length=10, gas_per_thrust=1/1000, min_dist_to_planet=1000, x=0.0, y=0.0):
 
-        super().__init__(name, 0.0, 0.0, mass)
+        super().__init__(name, x, y, mass)
         self._theta = 0.0
         self.gas_level = round_to_nearest(gas_level, 10)
         self._initial_gas_level = self.gas_level
