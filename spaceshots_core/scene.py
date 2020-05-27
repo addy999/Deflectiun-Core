@@ -92,8 +92,10 @@ class LevelBuilder:
         
         self.x_size = x_size
         self.y_size = y_size
+        self.size = self.x_size * self.y_size
         self.diag = (self.x_size**2 + self.y_size**2)**0.5
-        self.padding = self.diag / 10
+        self.padding = self.diag / 40
+        print("Size", self.size, "Padding", self.padding)
         
         # Initialization dicts
         
@@ -186,7 +188,8 @@ class LevelBuilder:
         start = time.time()
         init_config = dict_to_class(self.__dict__[option.lower()])
         
-        # Orbits         
+        # Orbits      
+        # print("Making orbits...")   
         orbits = []
         n = randint(*init_config.planet.n)
         orbits_valid = False
@@ -198,21 +201,25 @@ class LevelBuilder:
         # orbits.adjust_dir((self.x_size, self.y_size))
         
         # SC
+        # print("Making sc...")
         size = uniform(*init_config.sc.size)
         sc = Spacecraft('', uniform(*init_config.sc.mass), uniform(*init_config.sc.gas_level),uniform(*init_config.sc.thrust_force), gas_per_thrust=uniform(*init_config.sc.gas_per_thrust), width=size, length=size, x=uniform(*init_config.sc.start_pos[0]), y=uniform(*init_config.sc.start_pos[1]))
         # sc.y = sc.length/2
         
-        # Planets    
+        # Planets   
+        # print("Making planets...")    
         planets = [Planet(name='', mass=uniform(*init_config.planet.mass), orbit = orbit, radius_per_kilogram=uniform(*init_config.planet.radius_per_kilogram)) for orbit in orbits.orbits]
         valid = False
         while not valid:
             valid = True
             for planet in planets:
-                if not self.padding<=planet.x<=self.x_size-self.padding or not self.padding<=planet.y<=self.y_size-self.padding or sc.calc_distance(planet) <  self.diag / 3:
-                    planet.move(10)
+                # print(sc.calc_distance(planet), self.diag / 10)
+                if not self.padding<=planet.x<=self.x_size-self.padding or not self.padding<=planet.y<=self.y_size-self.padding or not sc.calc_distance(planet) > self.diag / 4:
+                    planet.move(20)
                     valid = False
   
         # Scene
+        # print("Making scene...")
         win_region = self.generate_win_region(randint(0,2), uniform(*init_config.scene.win_region_length))
         scene = Scene((self.x_size,self.y_size), sc, planets, win_region=win_region, win_velocity=uniform(*init_config.scene.win_velocity), completion_score=randint(*init_config.scene.completion_score),attempt_score_reduction=randint(*init_config.scene.attempt_score_reduction ), gas_bonus_score=randint(*init_config.scene.gas_bonus_score))
 
