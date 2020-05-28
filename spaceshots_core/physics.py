@@ -2,9 +2,9 @@ import numpy as np
 import math
 import os
 import sys
+import shapely.affinity
 
 from shapely.geometry.point import Point
-import shapely.affinity
 
 G = 6.67408e-11  # m^3/kg*s^2
 
