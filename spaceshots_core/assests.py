@@ -26,6 +26,9 @@ class Asset:
 
         self.x = 0
         self.y = 0
+    
+    def pos(self):
+        return self.x, self.y
 
     def calc_distance(self, other_asset):
 
@@ -242,8 +245,12 @@ class Spacecraft(Asset):
                
         old_val = self._theta
         if abs(vel_theta-old_val) < math.pi:
-            # self._theta = old_val + (val-old_val)/2
-            self._theta = vel_theta - math.pi*0.5
+            # within acceptable range
+            self._theta = vel_theta
+        else:
+            self._theta += (vel_theta-old_val)/2
+            
+        self._theta -= math.pi*0.5
         
     @property
     def p(self):
