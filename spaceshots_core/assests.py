@@ -86,6 +86,7 @@ class Planet(Asset):
     def move(self, dt=1.0):
         self.x, self.y = self.orbit.next_pos(dt)
         self.make_poly()
+        return self.pos()
     
     def save_state(self):        
         return '+'.join(self.__dict__.values())

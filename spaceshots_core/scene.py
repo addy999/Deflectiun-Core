@@ -73,7 +73,7 @@ class Scene:
     def update_all_pos(self, impulse_time):
 
         [planet.move(impulse_time) for planet in self.planets]
-        self.sc.update_pos(impulse_time, self.planets, False)
+        self.sc.update_pos(impulse_time, self.planets, True)
     
     def save_state(self):
         
@@ -115,7 +115,7 @@ class LevelBuilder:
                 mass = (100, 125),
                 gas_level = (350, 450),
                 thrust_force = (3000,3000),
-                size=(35,50), 
+                size=(self.size*30/(942*539),self.size*35/(942*539)),
                 start_pos=(
                     (self.x_size / 4, self.x_size * 0.75), 
                     (0, self.y_size*0.75)),
@@ -145,7 +145,7 @@ class LevelBuilder:
                 mass = (100, 125),
                 gas_level = (300, 450),
                 thrust_force = (3500,4500),
-                size=(35,50), 
+                size=(self.size*30/(942*539),self.size*35/(942*539)), 
                 start_pos=(
                     (self.x_size / 4, self.x_size * 0.75), 
                     (0, self.y_size*0.75)),
@@ -177,6 +177,29 @@ class LevelBuilder:
             p2 = [self.x_size, np.clip(p1[1] + length, None, self.y_size)]
         
         return p1,p2
+    
+    def move_planets(self, planets, sc):
+        step = 10
+        iterations = 200
+        for planet in planets:
+            # Iterate planet positions 
+            pos = [
+                {   
+                    "pos" : planet.move(step),
+                    "sc_dist" : sc.calc_distance(planet),
+                    "progress" : planet.orbit.progress
+                }
+                
+                for i in range(iterations)
+            ]
+            filtered_pos = [p for p in pos if self.padding<=p["pos"][0]<=self.x_size-self.padding and self.padding<=p["pos"][1]<=self.y_size-self.padding] # filter positions where planet is inside the screen - padding area 
+            # Sort for largest distance away from sc 
+            sorted_pos = sorted(filtered_pos, key = lambda i: i['sc_dist']) 
+            # Set planet to furthest position
+            planet.orbit.progress = sorted_pos[-1]["progress"]
+            planet.x, planet.y = sorted_pos[-1]["pos"]
+            
+            # print("avail x", [self.padding, self.x_size-self.padding], "avail y", [self.padding, self.y_size-self.padding], "set", planet.pos())
               
     def create(self, option):
         
@@ -191,35 +214,38 @@ class LevelBuilder:
         dur = 0
         while not orbits_valid and dur<=self.timeout:
             s = time.time()
-            orbits = OrbitCollection([Orbit(uniform(*init_config.orbit.a), uniform(*init_config.orbit.b), uniform(*init_config.orbit.center_x), uniform(*init_config.orbit.center_y), progress=uniform(0, 2*np.pi), angular_step=uniform(*init_config.orbit.angular_step), CW=randint(0,1)) for i in range(n)])
+            orbits = OrbitCollection([Orbit(uniform(*init_config.orbit.a), uniform(*init_config.orbit.b), uniform(*init_config.orbit.center_x), uniform(*init_config.orbit.center_y), progress=uniform(0, 2*np.pi), angular_step=uniform(*init_config.orbit.angular_step)) for i in range(n)])
             orbits_valid = orbits.orbits_valid(uniform(self.x_size/2, self.y_size/2), uniform( self.diag/2, self.diag*0.75))
             dur += time.time() - s
-        # print("Orbits", dur)
         
         # SC
         # print("Making sc...")
         size = uniform(*init_config.sc.size)
         sc = Spacecraft('', uniform(*init_config.sc.mass), uniform(*init_config.sc.gas_level),uniform(*init_config.sc.thrust_force), width=size, length=size, x=uniform(*init_config.sc.start_pos[0]), y=np.clip(uniform(*init_config.sc.start_pos[1]), size/2, None))
-        
-        # Orbit directions
-        orbits.adjust_dir_to_sc(sc.pos())
-        # orbits.adjust_dir((self.x_size, self.y_size))
-        
+                
         # Planets   
         # print("Making planets...")    
         planets = [Planet(name='', mass=uniform(*init_config.planet.mass), orbit = orbit) for orbit in orbits.orbits]
-        valid = False
-        dur = 0
-        while not valid and dur<=self.timeout:
-            valid = True
-            s = time.time()
-            for planet in planets:
-                if not self.padding<=planet.x<=self.x_size-self.padding or not self.padding<=planet.y<=self.y_size-self.padding or not sc.calc_distance(planet) > self.diag / 4:
-                    planet.move(60)
-                    valid = False
-            dur += time.time() - s
+        min_distance_from_sc = self.diag / 3
+        s = time.time()
+        self.move_planets(planets, sc)
+        print("Planets took", time.time() - s)
+        
+        # valid = False
+        # dur = 0
+        # while not valid and dur<=self.timeout:
+        #     valid = True
+        #     s = time.time()
+        #     for planet in planets:
+        #         if not self.padding<=planet.x<=self.x_size-self.padding or not self.padding<=planet.y<=self.y_size-self.padding or not sc.calc_distance(planet) > self.diag / 3:
+        #             planet.move(10)
+        #             valid = False
+        #     dur += time.time() - s
             
-        # print("Planets", dur)
+        # Orbit directions
+        orbits.adjust_dir_to_screen(self.x_size, self.y_size)
+        # print([sc.calc_distance(planet) for planet in planets])
+        # orbits.adjust_dir_to_sc(sc.pos()) 
   
         # Scene
         # print("Making scene...")
