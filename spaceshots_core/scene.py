@@ -221,14 +221,15 @@ class LevelBuilder:
         # print("Making sc...")
         size = uniform(*init_config.sc.size)
         sc = Spacecraft('', uniform(*init_config.sc.mass), uniform(*init_config.sc.gas_level),uniform(*init_config.sc.thrust_force), width=size, length=size, x=uniform(*init_config.sc.start_pos[0]), y=np.clip(uniform(*init_config.sc.start_pos[1]), size/2, None))
+        # sc.y = size/2
                 
         # Planets   
         # print("Making planets...")    
         planets = [Planet(name='', mass=uniform(*init_config.planet.mass), orbit = orbit) for orbit in orbits.orbits]
         min_distance_from_sc = self.diag / 3
-        s = time.time()
+        # s = time.time()
         self.move_planets(planets, sc)
-        print("Planets took", time.time() - s)
+        # print("Planets took", time.time() - s)
         
         # valid = False
         # dur = 0

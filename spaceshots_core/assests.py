@@ -248,8 +248,8 @@ class Spacecraft(Asset):
         if abs(vel_theta-old_val) < math.pi:
             # within acceptable range
             self._theta = vel_theta
-        else:
-            self._theta += (vel_theta-old_val)/2
+        # else:
+        #     self._theta += (vel_theta-old_val)/2
             
         self._theta -= math.pi*0.5
         
