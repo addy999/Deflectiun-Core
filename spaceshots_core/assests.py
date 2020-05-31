@@ -243,15 +243,18 @@ class Spacecraft(Asset):
 
     @theta.setter
     def theta(self, vel_theta):
-               
+                       
         old_val = self._theta
-        if abs(vel_theta-old_val) < math.pi:
-            # within acceptable range
-            self._theta = vel_theta
-        # else:
-        #     self._theta += (vel_theta-old_val)/2
-            
-        self._theta -= math.pi*0.5
+        
+        if abs(vel_theta-old_val) < math.pi*2: # within acceptable range            
+            self._theta = vel_theta - math.pi*0.5
+        else:
+            self._theta = vel_theta - math.pi*2 - math.pi*0.5
+        #     self._theta = vel_theta*0.75 + old_val*0.25
+
+        # self._theta = vel_theta
+        
+        # print(self._theta)
         
     @property
     def p(self):

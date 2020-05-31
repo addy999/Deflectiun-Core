@@ -23,8 +23,8 @@ class Velocity:
     def get_theta(self):
 
         angle = angle_between([1, 0], self.vec)
-        if self.y < 0:
-            angle += np.pi
+        # if self.y < 0:
+        #     angle += np.pi
 
         return angle
 
@@ -117,6 +117,9 @@ class Orbit:
     def change_angular_step(self, angular_step=float):
         self.angular_step = angular_step % 2*np.pi
 
+    def set_progress(self, pos):        
+        self.progress = math.acos((pos[0]-self.center_x) / self.a)
+
     def x(self, progress):
         # i = progress
         # # return self.center_x - self.b * np.cos(i)    
@@ -138,6 +141,9 @@ class Orbit:
             self.progress -= self.angular_step * factor
 
         return self.get_pos()
+
+    def prev_pos(self, factor=1.0):
+        self.next_pos(-factor)
 
     def reset_pos(self):
         self.progress = 0
@@ -177,8 +183,9 @@ class OrbitCollection:
         center = (x_screen/2, y_screen/2)
         for o in self.orbits:
             current_dist = euclidian_distance(o.get_pos(), center)
-            o.next_pos(5)
+            o.next_pos(1)
             next_dist = euclidian_distance(o.get_pos(), center)
+            o.prev_pos(1)
             # print("center", center, "Current", current_dist, "After",  next_dist, o.cw)
             if next_dist > current_dist:
                 # moved far away
