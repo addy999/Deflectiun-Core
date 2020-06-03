@@ -89,7 +89,7 @@ class LevelBuilder:
     '''
     Generates spacecraft, planets, and scene based on some config options.
     '''
-    def __init__(self, x_size, y_size, timeout=2):
+    def __init__(self, x_size, y_size, timeout=5):
         
         self.x_size = x_size
         self.y_size = y_size
@@ -124,7 +124,7 @@ class LevelBuilder:
             ),
             scene = dict(
                 win_region_length = sorted((self.x_size/2, self.y_size/2)), 
-                win_region_pos_prob = [0.1, 0.8, 0.1],
+                win_region_pos_prob = [0.1, 0.8, 0.1, 0],
                 win_velocity = (90, 125),
                 completion_score=(50,100), 
                 attempt_score_reduction=(1,3), 
@@ -154,7 +154,37 @@ class LevelBuilder:
             ),
             scene = dict(
                 win_region_length = sorted((self.x_size/3, self.y_size/3)), 
-                win_region_pos_prob = [1/3, 1/3, 1/3],
+                win_region_pos_prob = [1/3, 1/3, 1/3, 0],
+                win_velocity = (100, 150),
+                completion_score=(100,150), 
+                attempt_score_reduction=(5,7), 
+                gas_bonus_score=(10,15),  
+            )   
+        )
+        self.hard = dict(
+            planet = dict(
+                n = (1,2),
+                mass = (4e16, 5e16),
+            ),
+            orbit = dict(
+                a = (x_size/4, x_size*0.75),
+                b = (y_size/4, y_size*0.75),
+                angular_step = (1.5*np.pi/200, 3*np.pi/200),
+                center_x = (0, self.x_size), 
+                center_y = (0, self.y_size),
+            ),
+            sc = dict(
+                mass = (100, 125),
+                gas_level = (300, 450),
+                thrust_force = (3500,4500),
+                size=(self.size*30/(942*539),self.size*35/(942*539)), 
+                start_pos=(
+                    (self.x_size / 4, self.x_size * 0.75), 
+                    (self.y_size / 4, self.y_size * 0.75)),
+            ),
+            scene = dict(
+                win_region_length = sorted((self.x_size/3, self.y_size/3)), 
+                win_region_pos_prob = [1/3, 0, 1/3, 1/3],
                 win_velocity = (100, 150),
                 completion_score=(100,150), 
                 attempt_score_reduction=(5,7), 
@@ -171,12 +201,18 @@ class LevelBuilder:
             p2 = [0, np.clip(p1[1] + length, None, self.y_size)]
         
         if pos == 1:
+            # top
             p1 = [uniform(0, self.x_size/2), self.y_size]
             p2 = [np.clip(p1[0] + length, None, self.x_size), self.y_size]
         
         if pos == 2:
             p1 = [self.x_size, uniform(self.y_size/3, self.y_size*0.75)]
             p2 = [self.x_size, np.clip(p1[1] + length, None, self.y_size)]
+        
+        if pos == 3:
+            # bottom
+            p1 = [uniform(0, self.x_size/2), 0]
+            p2 = [np.clip(p1[0] + length, None, self.x_size), 0]
         
         return p1,p2
     
@@ -225,7 +261,7 @@ class LevelBuilder:
         # print("Planets took", time.time()-s)
   
         # Scene
-        win_region = self.generate_win_region(np.random.choice(range(0, 3), p=init_config.scene.win_region_pos_prob), uniform(*init_config.scene.win_region_length))
+        win_region = self.generate_win_region(np.random.choice(range(0, 4), p=init_config.scene.win_region_pos_prob), uniform(*init_config.scene.win_region_length))
         scene = Scene((self.x_size,self.y_size), sc, planets, win_region=win_region, win_velocity=uniform(*init_config.scene.win_velocity), completion_score=randint(*init_config.scene.completion_score),attempt_score_reduction=randint(*init_config.scene.attempt_score_reduction ), gas_bonus_score=randint(*init_config.scene.gas_bonus_score))
 
         print("Took", time.time() - start)
