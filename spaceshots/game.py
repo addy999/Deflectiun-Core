@@ -1,8 +1,4 @@
-import os, sys
-import math
-import numpy as np
 import time
-import dill
 
 from .assests import *
 from .scene import *

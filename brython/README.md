@@ -14,14 +14,14 @@ To get started, use the following scripts in your html:
 </script>
 
 <!--> Loads spaceshots library -->
-<script async="async" src="https://github.com/addy999/Spaceshots-Core/raw/master/brython/spaceshots.brython.js">
+<script async="async" src="https://cdn.jsdelivr.net/gh/addy999/Spaceshots-Core@master/brython/spaceshots.brython.js">
 </script>
 
 <!--> Attaches spaceshots API to the window object for use in javascript code -->
 <script type="text/python3">
     from browser import window
     import spaceshots
-    window.game = spaceshots.api
+    window.api = spaceshots.api
 </script>
 ```
 
