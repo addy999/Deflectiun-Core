@@ -14,7 +14,7 @@ To get started, use the following scripts in your html:
 </script>
 
 <!--> Loads spaceshots library -->
-<script async="async" src="url to spaceshots.brython.js">
+<script async="async" src="https://github.com/addy999/Spaceshots-Core/raw/master/brython/spaceshots.brython.js">
 </script>
 
 <!--> Attaches spaceshots API to the window object for use in javascript code -->
