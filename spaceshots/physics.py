@@ -266,13 +266,13 @@ class RectPolygon:
             bottom = y2b < y1
             top = y1b < y2
             if top and left:
-                return vector_norm((x1, y1b), (x2b, y2))
+                return distance_between_points((x1, y1b), (x2b, y2))
             elif left and bottom:
-                return vector_norm((x1, y1), (x2b, y2b))
+                return distance_between_points((x1, y1), (x2b, y2b))
             elif bottom and right:
-                return vector_norm((x1b, y1), (x2, y2b))
+                return distance_between_points((x1b, y1), (x2, y2b))
             elif right and top:
-                return vector_norm((x1b, y1b), (x2, y2))
+                return distance_between_points((x1b, y1b), (x2, y2))
             elif left:
                 return x1 - x2b
             elif right:
@@ -289,7 +289,7 @@ def unit_vector(vector):
     """ Returns the unit vector of the vector.  """
     norm = vector_norm(vector)
     if norm > 0:
-        return vector / norm
+        return [i / norm for i in vector]
     else:
         return [0.0, 0.0]
 

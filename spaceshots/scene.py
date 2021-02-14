@@ -78,7 +78,7 @@ class Scene:
         return "+".join(self.__dict__.values())
 
     def __repr__(self):
-        print(str(vars(self)), width=100, indent=5, depth=4)
+        print(vars(self))
         return ""
 
 
@@ -281,7 +281,7 @@ class LevelBuilder:
 
         # Scene
         win_region = self.generate_win_region(
-            choices([0, 1, 2, 3], weights=init_config.scene.win_region_pos_prob),
+            choices([0, 1, 2, 3], weights=init_config.scene.win_region_pos_prob)[0],
             uniform(*init_config.scene.win_region_length),
         )
         scene = Scene(

@@ -20,7 +20,7 @@ class Game:
         else:
             self.current_scene = self.scenes[0]
 
-    def control_sc(self, command=int):
+    def control_sc(self, command: int):
 
         """ 1: up, 2:left, 3: down, 4: right """
 
@@ -149,7 +149,7 @@ class Game:
 
         time.sleep(dt)
 
-    def step(self, command=int, wait=False):
+    def step(self, command: int, wait=False):
 
         start = time.time()
         self.control_sc(command)
